@@ -8,7 +8,7 @@ from keras.optimizers import RMSprop
 
 from  random import random
 
-def GSO(input_number, n_neurons, n_glowworms, fitness_value, max_iter):
+def GSO(input_number, n_neurons, n_glowworms, fitness_value, max_iter, luci_enhancement):
     dimension = (input_number * n_neurons) + (2 * n_neurons) + n_neurons
     
     glowworm_dict = {}
@@ -25,7 +25,8 @@ def GSO(input_number, n_neurons, n_glowworms, fitness_value, max_iter):
     while t < max_iter:
         for glow_idx in range(n_glowworms):
             #TODO: Luciferin update
-            pass
+            luciferin[glow_idx] = (1 - random())* luciferin[glow_idx] + (luci_enhancement * fitness_value)
+            
         
         for glow_idx in range(n_glowworms):
             #TODO: Movement phase
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     
     batch_size = 128
     num_classes = 10
-    epochs = 20
+    epochs = 5
 
     INPUT_NUMBER = 784
     N_NEURONS = 512
@@ -80,6 +81,7 @@ if __name__ == "__main__":
                         epochs=epochs,
                         verbose=1,
                         validation_data=(x_test, y_test))
+    
     score = model.evaluate(x_test, y_test, verbose=0)
 
     accuracy = score[1]
