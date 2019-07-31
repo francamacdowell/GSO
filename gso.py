@@ -8,39 +8,95 @@ from keras.optimizers import RMSprop
 
 from  random import random
 
-def GSO(input_number, n_neurons, n_glowworms, fitness_value, max_iter, luci_enhancement):
+def GSO(input_number, n_neurons, fitness_value, max_iter, luci_enhancement, luci_decay, neigh_ray):
     dimension = (input_number * n_neurons) + (2 * n_neurons) + n_neurons
     
-    glowworm_dict = {}
+    glow_input_layer = []
+    glow_hidden_layer = []
+    glow_bias = []
     luciferin = {}
 
-    for glow_idx in range(n_glowworms):
-        glowworm_dict[glow_idx]['conn_weight_input'] = random()
-        glowworm_dict[glow_idx]['conn_weight_hidden'] = random()
-        glowworm_dict[glow_idx]['bias'] = random()
-        luciferin[glow_idx] = 0
+    luciferin['input'] = []
+    luciferin['hidden'] = []
+    luciferin['bias'] = []
     
-    #TODO R(i,d) = r0
+    for glow_idx in range(input_number):
+        glow_input_layer.append(random())
+        luciferin['input'].append(0)
+    
+    
+    for glow_idx in range(n_neurons):
+        glow_hidden_layer.append(random())
+        luciferin['hidden'].append(0)
+
+        glow_bias.append(random())
+        luciferin['bias'].append(0)
+
     t = 0
+
     while t < max_iter:
-        for glow_idx in range(n_glowworms):
-            #TODO: Luciferin update
-            luciferin[glow_idx] = (1 - random())* luciferin[glow_idx] + (luci_enhancement * fitness_value)
-            
+        print(str(t) + ' ITERATION:')
+        # TO INPUT LAYER
+        for glow_idx in range(input_number):
+            luciferin[glow_idx] = ((1 - luci_decay) * luciferin['input'][glow_idx]) + (luci_enhancement * fitness_value)
         
-        for glow_idx in range(n_glowworms):
-            #TODO: Movement phase
-            pass
+        for glow_idx in range(input_number):
 
-        t += 1 
+            neighbours = []
 
+            for glow_i in range(input_number):
+
+                if glow_idx != glow_i:
+                    d = abs(glow_input_layer[glow_idx] - glow_input_layer[glow_i])
+                    if d <= neigh_ray:
+                        neighbours.append([glow_i, luciferin['input'][glow_i]])
+            
+            major_glow = [-1, -1]
+    
+            for n in neighbours:
+                if n[1] > major_glow[1]:
+                    major_glow = n
+            
+            #Movment phase
+            glow_input_layer[glow_idx] += abs(glow_input_layer[glow_idx] - glow_input_layer[major_glow[0]]) / 2
+
+        # TO HIDDEN LAYER
+        for glow_idx in range(n_neurons):
+            
+            luciferin['hidden'][glow_idx] = ((1 - luci_decay) * luciferin['hidden'][glow_idx]) + (luci_enhancement * fitness_value)
+            luciferin['bias'][glow_idx] = ((1 - luci_decay) * luciferin['bias'][glow_idx]) + (luci_enhancement * fitness_value)
+        
+
+        for glow_idx in range(n_neurons):
+
+            neighbours = []
+
+            for glow_i in range(n_neurons):
+
+                if glow_idx != glow_i:
+                    d = abs(glow_hidden_layer[glow_idx] - glow_hidden_layer[glow_i])
+                    if d <= neigh_ray:
+                        neighbours.append([glow_i, luciferin['hidden'][glow_i]])
+            
+
+            major_glow = [-1, -1]
+    
+            for n in neighbours:
+                if n[1] > major_glow[1]:
+                    major_glow = n
+
+            #Movment phase
+            glow_hidden_layer[glow_idx] += abs(glow_hidden_layer[glow_idx] - glow_hidden_layer[major_glow[0]]) / 2
+
+        t += 1
+    return glow_input_layer, glow_hidden_layer, glow_bias
 
 
 if __name__ == "__main__":
     
     batch_size = 128
     num_classes = 10
-    epochs = 5
+    epochs = 1
 
     INPUT_NUMBER = 784
     N_NEURONS = 512
@@ -66,8 +122,6 @@ if __name__ == "__main__":
     model = Sequential()
     model.add(Dense(N_NEURONS, activation='relu', input_shape=(INPUT_NUMBER,)))
     model.add(Dropout(0.2))
-    model.add(Dense(N_NEURONS, activation='relu'))
-    model.add(Dropout(0.2))
     model.add(Dense(num_classes, activation='softmax'))
 
     model.summary()
@@ -88,4 +142,17 @@ if __name__ == "__main__":
 
     print('Test loss:', score[0])
     print('Test accuracy:', score[1])
-        
+    
+    input_weigth, hidden_weigth, bias = GSO(INPUT_NUMBER, N_NEURONS, score[1], 10, 0.6, 0.4, 0.2)
+
+    model2 = Sequential()
+    model2.add(Dense(N_NEURONS, activation='relu', input_shape=(INPUT_NUMBER,)))
+    model2.add(Dropout(0.2))
+    model2.add(Dense(num_classes, activation='softmax'))
+
+    import numpy
+    model2.summary()
+    hidden_weigth = numpy.asarray(hidden_weigth)
+    bias = numpy.asarray(bias)
+    print('Input layer weigths:')
+    print(input_weigth)
