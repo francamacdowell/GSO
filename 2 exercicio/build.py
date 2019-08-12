@@ -64,8 +64,8 @@ def run_pygame(city, base_stations) :
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
     RED = (255, 0, 0)
-    GREEN = (0, 255, 0)
-    BLUE = (0, 0, 255)
+    GREEN = (0, 0, 0)
+    PURPLE = (100, 0, 255)
     GRAY = (127, 127, 127)
     # inicia as fontes
     basicFont = pygame.font.SysFont(None, 48)
@@ -82,7 +82,7 @@ def run_pygame(city, base_stations) :
         for i in range(len(x)) :
             points_base_stations.append([x[i], y[i]])
             
-        pygame.draw.polygon(windowSurface, BLUE, points_base_stations)    
+        pygame.draw.polygon(windowSurface, PURPLE, points_base_stations)    
                 
     # desenha a janela na tela
     pygame.display.update()

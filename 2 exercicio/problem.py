@@ -38,14 +38,23 @@ centers = [centers_1, centers_2, centers_3]
 def main():
     parser = argparse.ArgumentParser(
         description='GSO for optimizing basement problem')
-    parser.add_argument('-p', '--population', default=12, type=int,
+    parser.add_argument('-p', '--population', default=100, type=int,
                         help='Population size')
     parser.add_argument('-it', '--iterations', type=int,
                         default=100,
                         help='Number of iterations')
-    parser.add_argument('-c', '--choice', type=int,
+    parser.add_argument('-i', '--input', type=int,
                         default=1,
-                        help='Choice the instance')
+                        help='Input instace of the problem')
+    parser.add_argument('-l', '--luciferin', type=float,
+                        default=0.2,
+                        help='Luciferin Enhancement coeficient')
+    parser.add_argument('-r', '--ray', type=int,
+                        default=1000,
+                        help='Ray range distance')
+    parser.add_argument('--step', type=float,
+                        default=0.5,
+                        help='Step coeficient')
     parser.add_argument('-s', '--show', type=bool,
                         default=False,
                         help='Show bases station')
@@ -57,18 +66,17 @@ def main():
     print("**************************************")
 
 
-    if args.choice < 1 or args.choice > 3 :
-        print("The instance choice doesn't exists")
+    if args.input < 1 or args.input > 3 :
+        print("The instance input doesn't exists")
         return 
     
-    low_boundary = 0 + R[args.choice-1]
+    low_boundary = 0 + R[args.input-1]
     
-    upper_boundary = 625 - R[args.choice-1]
+    upper_boundary = 625 - R[args.input-1]
     
-    city = create_city(centers[args.choice-1], D[args.choice-1])
+    city = create_city(centers[args.input-1], D[args.input-1])
     
-    center_base_stations = GSO(low_boundary, upper_boundary, (K[args.choice-1], 2), args.population, args.iterations, R[args.choice-1], D[args.choice-1], city, centers[args.choice-1], args.show, 0.2, 1000, 0.5)
-    # center_base_stations = GWO(low_boundary, upper_boundary, (K[args.choice-1], 2), args.population, args.iterations, R[args.choice-1], D[args.choice-1], city, centers[args.choice-1], args.show)
+    center_base_stations = GSO(low_boundary, upper_boundary, (K[args.input-1], 2), args.population, args.iterations, R[args.input-1], D[args.input-1], city, centers[args.input-1], args.show, args.luciferin, args.ray, args.step)
 
 if __name__ == "__main__":
     main()
