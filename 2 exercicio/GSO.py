@@ -15,6 +15,7 @@ from build import run_pygame
 
 
 def calculate_fitness(worm, radius, city):
+    
     circles = []
     for center in worm:
         point = Point(center[0], center[1])
@@ -26,12 +27,6 @@ def calculate_fitness(worm, radius, city):
 
 
 def GSO(low_boundary, upper_boundary, dimension, population, iterations, radius, D, city, city_centers, show, luciferin_enhancement, ray, step):
-
-    print("low boundary", low_boundary)
-    print("upper boundary", upper_boundary)
-    print("dimension", dimension)
-    print("population", population)
-    print("iterations", iterations)
 
     # Initialize the positions of search agents
     best_fitness = -999999
@@ -92,8 +87,8 @@ def GSO(low_boundary, upper_boundary, dimension, population, iterations, radius,
             Positions[i] += step * d
 
         if (l % 1 == 0):
-            print(['At iteration ' + str(l+1) +
-                   ' the best fitness is ' + str(best_fitness)])
+            print(['Iteration: ' + str(l+1) +
+                   ' the best fitness: ' + str(best_fitness)])
             if show:
                 run_pygame(create_city_points(city_centers, D),
                            create_base_stations_points(worm_pos, radius))

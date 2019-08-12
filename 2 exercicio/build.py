@@ -7,7 +7,7 @@ from pygame.locals import *
 import math
 
 
-def createPoints2Poly(side, center, radius):
+def create_points_2_poly(side, center, radius):
     angle = 2*math.pi/side
     points = []
     for i in range(side):
@@ -21,7 +21,7 @@ def createPoints2Poly(side, center, radius):
 def create_city_points(centers, d) :
     Hx = []
     for center in centers :
-        Hx.append(createPoints2Poly(6, center, d))
+        Hx.append(create_points_2_poly(6, center, d))
 
     return Hx
 
@@ -29,7 +29,7 @@ def create_city(centers, d) :
     Hx = []
     
     for center in centers :
-        Hx.append(Polygon(createPoints2Poly(6, center, d)))
+        Hx.append(Polygon(create_points_2_poly(6, center, d)))
 
     return cascaded_union(Hx)
 

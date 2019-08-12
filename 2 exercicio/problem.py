@@ -7,7 +7,7 @@ from shapely.geometry.point import Point
 from shapely.ops import cascaded_union
 from build import run_pygame
 from build import create_base_stations
-from build import createPoints2Poly
+from build import create_points_2_poly
 from build import create_city
 import math
 
